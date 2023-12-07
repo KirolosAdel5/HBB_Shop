@@ -7,11 +7,26 @@ class AddressInline(admin.StackedInline):  # You can also use admin.TabularInlin
     extra = 1  # Number of empty forms to display
 
 class CustomUserAdmin(UserAdmin):
-    inlines = [AddressInline]  # Include the AddressInline inlines
+    inlines = [AddressInline]
 
     list_display = ('id', 'username', 'phone_number', 'first_name', 'last_name', 'is_staff', 'is_active')
     search_fields = ('username', 'phone_number', 'first_name', 'last_name')
 
+    # Include 'phone_number' in the add and edit forms
+    fieldsets = (
+        (None, {'fields': ('username', 'phone_number', 'password')}),
+        ('Personal Info', {'fields': ('first_name', 'last_name', 'email')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Important dates', {'fields': ('last_login', 'date_joined')}),
+    )
+
+    # Add the following lines to include 'phone_number' in the add form
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('username', 'phone_number', 'password1', 'password2'),
+        }),
+    )
 admin.site.register(CustomUser, CustomUserAdmin)
 
 @admin.register(Address)

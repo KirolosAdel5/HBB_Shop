@@ -114,10 +114,10 @@ DATABASES = {
     
        'default': {
        'ENGINE': 'django.db.backends.postgresql',
-       'NAME': "verceldb",
-       'USER': 'default',
-       'PASSWORD': 'c5nQFT9NdhEg',
-       'HOST': 'ep-dry-queen-60967261-pooler.us-east-1.postgres.vercel-storage.com',
+       'NAME': "hpp_shop",
+       'USER': 'postgres',
+       'PASSWORD': '123456',
+       'HOST': 'localhost',
        'PORT': '5432',
    }
 }
