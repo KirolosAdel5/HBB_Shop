@@ -1,0 +1,378 @@
+{% extends 'admin/index.html' %}
+
+{% load static %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500&family=Roboto:wght@700&display=swap" rel="stylesheet">
+
+       
+{% endblock %}
+
+{% block content %}
+
+<div  style="width:100%; margin-top:20px;margin-bottom:20px;"
+>
+<div style="display: flex; flex-wrap: wrap; gap: 20px;">
+    {% block card_content %}
+    <div class="card mb-3" style="min-width: 200px; max-width: 400px; ">
+        <div class="card-header" style="background: #f9b649;color: #ffff;">
+        <h2 style="font-family:  'IBM Plex Sans Arabic', sans-serif;">المستخدمين</h2>
+    </div>
+    <div class="card-body">
+        <div class="circle-icon" id="user-card">
+            <!-- Data will be dynamically updated here using AJAX -->
+        </div>
+    </div>
+</div>
+<div class="card mb-3" style="min-width: 200px; max-width: 400px;">
+    <div class="card-header" style="background: #007bff;color: #ffff;">
+        <h2 style="font-family:  'IBM Plex Sans Arabic', sans-serif;">اجمالي الطلبات</h2>
+    </div>
+    <div class="card-body">
+        <div class="circle-icon" id="total-order-card">
+            <!-- Data will be dynamically updated here using AJAX -->
+        </div>    
+    
+    </div>
+</div>
+
+<div class="card" style="min-width: 200px;">
+    <div class="card-header" style="background: #16a991;color: #ffff;">
+        <h2 style="font-family:  'IBM Plex Sans Arabic', sans-serif;">الطلبات المكتملة</h2>
+    </div>
+    <div class="card-body">
+        <div class="circle-icon"  id="total-completed-order-card">
+        </div>
+    </div>
+</div>
+<div class="card" style="min-width: 200px;">
+    <div class="card-header" style="background: #677c82;color: #ffff;">
+        <h2 style="font-family:  'IBM Plex Sans Arabic', sans-serif;">الطلبات الجارية</h2>
+    </div>
+    <div class="card-body">
+        <div class="circle-icon"  id="total-processing-order-card">
+        </div>
+    </div>
+</div>
+<div class="card" style="min-width: 200px;">
+    <div class="card-header" style="background: #f36359;color: #ffff;">
+        <h2  style="font-family:  'IBM Plex Sans Arabic', sans-serif;">الطلبات الملغية</h2>
+    </div>
+    <div class="card-body">
+        <div class="circle-icon" id="total-canceled-order-card">
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+</div>
+
+
+<div class="row">
+
+    <div class="col-md-6" style="backgroundColor: red; padding: 20px;">
+        <div class="row" style="direction:rtl;">
+        <h4 style="font-family:  'IBM Plex Sans Arabic', sans-serif;">المبيعات</h4>
+    </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <canvas id="myChart2" width="600" height="400" style="display: block; max-height: 435px; max-width: 100%;"></canvas>
+            
+            </div>
+            <div class="col-md-6 text-right">
+                <p>مبيعات الشهر</p>
+                <p style="
+                font-size: xxx-large;
+                font-weight: 600;
+                color: #571dbd;"
+                
+                id = "month_sales_value"
+                > </p> 
+            <div class="row" style="direction:rtl;">
+                <p> الشهر الماضي </p>
+                <p style="
+                font-size:25;
+                font-weight: 600;
+                color: #571dbd;
+                background: rgb(87 29 189 / 45%);
+                padding-left: 10px;
+                padding-right: 10px;
+                border-radius: 20px;
+                margin-right: 10px;"
+                id = "last_month_sales_value"
+
+                >
+            </p>   
+    
+            </div>
+        </div>
+        </div>
+        
+        <hr> <!-- Separator line -->
+
+        <div class="row" >
+            <div class="col-md-6" style="
+            direction: rtl;
+            text-align: right;
+        ">
+                        <p>كل المبيعات</p>
+                        <p 
+                        id = "total_sales_value"
+                        ></p>
+                    </div>
+            <div class="col-md-6 text-right">
+                <p>مبيعات اليوم</p>
+                <p 
+                    id="today_sales_value"
+                ></p>
+
+                <div class="row" style="direction:rtl;">
+                    <p> الأمس</p>
+                    <p style="
+                    font-size:25;
+                    font-weight: 600;
+                    color: #2d2d2d;
+                    background: rgb(182 182 182 / 45%);
+                    padding-left: 10px;
+                    padding-right: 10px;
+                    border-radius: 20px;
+                    margin-right: 10px;
+                "
+                    id = "yesterday_sales_value"
+                ></p>   
+    
+            </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <canvas id="myChart" width="500" height="400" style="display: block; max-height: 435px; max-width: 100%;"></canvas>
+    </div>
+</div>
+
+</div>
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+<script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
+<script type="text/javascript">
+    
+    $.get('{% url 'dashboard:line_chart_json' %}', function (data) {
+
+
+
+
+        var ctx = $("#myChart").get(0).getContext("2d");
+        var gradient = ctx.createLinearGradient(0, 0, 0, 500);  // Adjust the gradient direction and size as needed
+        gradient.addColorStop(0, 'rgba(50, 142, 249, 0.5)');  // Start color
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');  // End color (transparent)
+        var gradientColor = gradient;
+
+        var chartData = {
+            
+            labels: data.labels,
+            datasets: [
+                {
+                    label: 'جميع الطلبات',
+                    data: data.datasets[0].data,
+                    
+                    borderColor: 'rgba(50, 142, 249,1)',
+                    backgroundColor: gradientColor,
+    
+
+                    tension: 0.1
+                },
+                {
+                    label: 'الطلبات المكتملة',
+                    data: data.datasets[1].data,
+                    borderColor: 'rgba(22, 169, 145,1)',
+                    backgroundColor: 'rgba(22, 169, 145 , 0.5)',
+
+                    tension: 0.1
+                },
+                {
+                    label: 'الطلبات الجارية',
+                    data: data.datasets[2].data,
+                    borderColor: 'rgba(103, 124, 130,1)',
+                    backgroundColor: 'rgba(103, 124, 130,0.5)',
+    
+
+                    tension: 0.1
+                }
+                ,
+                {
+                    label: 'الطلبات الملغية',
+                    data: data.datasets[3].data,
+                    borderColor: 'rgba(243, 67, 54,1)',
+                    backgroundColor: 'rgba(243, 67, 54,0.5)',
+    
+
+                    tension: 0.1
+                }
+            ]
+            };
+
+    var chartOptions = {
+        scales: {
+            xAxes: [
+
+            {
+                gridLines: {
+                    
+                    display:false
+                }
+            }],
+            yAxes: [{
+                
+                gridLines: {
+                    display:true,
+                    borderDash: [8, 4],
+
+                }   ,
+                
+            }],
+        },
+        elements: {
+            line: {
+                tension: 0,  // Set tension to 0 for straight lines
+            },
+        },
+        legend: {
+            display: true,
+            position: 'bottom',  // Change the legend position if needed
+        },
+
+        };
+
+        new Chart(ctx, {
+            type: 'line',
+            data: chartData,
+            options: chartOptions,
+        });
+    });
+
+
+    $.get('{% url 'dashboard:sales_line_chart_json' %}', function (data) {
+
+
+
+
+        var ctx = $("#myChart2").get(0).getContext("2d");
+
+
+        var chartData = {
+            
+            labels: data.labels,
+            datasets: [
+                {
+                    label: 'المبيعات',
+                    data: data.datasets[0].data,
+                    borderColor: 'rgba(87, 29, 189,1)',
+                    pointBackgroundColor:'rgba(87, 29, 189,1)',
+                    backgroundColor: 'rgba(0, 0, 0,0)',
+
+                    tension: 0.1
+                }
+            ]
+            };
+
+    var chartOptions = {
+        scales: {
+
+            xAxes: [
+        
+
+            {
+                
+                gridLines: {
+                    display:true,
+                    borderDash: [8, 4],
+                    drawBorder: false,    
+                    drawTicks: false,
+                    zeroLineColor:'rgba(0, 0, 0,0.1)',
+                    zeroLineBorderDash: [8, 4],  // Make zeroLineColor dashed
+
+                }
+                ,
+                ticks: {
+                    display: false
+                  }
+            }],
+            yAxes: [{
+                
+                gridLines: {
+
+                    display:false,
+                    borderDash: [8, 4],
+                    drawTicks: false,
+                    drawBorder: false,
+                    
+                }   ,
+                ticks: {
+                    display: false
+                  }
+              
+            }],
+        },
+        elements: {
+            line: {
+                tension: 0,  // Set tension to 0 for straight lines
+            },
+        },
+        legend: {
+            display: false,
+        },
+        layout: { padding: { 
+            
+            top: 20,
+            bottom: 20,
+            left: 10,
+            right: 10
+         } }
+        };
+
+        new Chart(ctx, {
+            type: 'line',
+            data: chartData,
+            options: chartOptions,
+        });
+    });
+
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    // Use AJAX to fetch data from the API and update the user card
+    $.get('{% url 'dashboard:dash_board_json' %}', function (data) {
+        var userCard = $('#user-card');
+        userCard.html('<i class="fas fa-user" style="background-color: #f9b649;"></i> <span style="font-size: xxx-large; font-weight: 600;">' + data.total_users + '</span>');
+        
+        var totalOrderCard = $('#total-order-card');
+        totalOrderCard.html('<i class="fas fa-shopping-bag" style="background-color: #007bff;"></i> <span style="font-size: xxx-large; font-weight: 600;">' + data.total_orders + '</span>');
+        
+        var totalCompletedOrderCard = $('#total-completed-order-card');
+        totalCompletedOrderCard.html('<i class="fas fa-check" style="background-color: #16a991;"></i> <span style="font-size: xxx-large; font-weight: 600;">' + data.completed_orders + '</span>');
+        
+        var totalProcessingOrderCard = $('#total-processing-order-card');
+        totalProcessingOrderCard.html('<i class="fas fa-box-open" style="background-color: #677c82;"></i> <span style="font-size: xxx-large; font-weight: 600;">' + data.processing_orders + '</span>');
+        
+        var totalCanceledOrderCard = $('#total-canceled-order-card');
+        totalCanceledOrderCard.html('<i class="fas fa-times" style="background-color: #f36359;"></i> <span style="font-size: xxx-large; font-weight: 600;">' + data.cancelled_orders + '</span>');
+        
+        document.getElementById('month_sales_value').textContent = data.total_sales_month.toFixed(2);
+        document.getElementById('last_month_sales_value').textContent = data.total_sales_two_months_ago.toFixed(2);
+        document.getElementById('total_sales_value').textContent = data.total_sales_all_time.toFixed(2);
+        document.getElementById('today_sales_value').textContent = data.total_sales_today.toFixed(2);
+        document.getElementById('yesterday_sales_value').textContent = data.total_sales_yesterday.toFixed(2);
+
+    });
+</script>
+{{ block.super }}
+
+{% endblock %}

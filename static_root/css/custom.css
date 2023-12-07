@@ -1,0 +1,32 @@
+/* custom.css */
+
+/* Change background color of the main admin container */
+body#djHideToolBar #djConsole,
+body#djHideToolBar div#container {
+    background-color: #f0f0f0;
+}
+
+/* Change text color of the top bar in the admin dashboard */
+body#djHideToolBar #header {
+    color: #333;
+}
+
+/* Change background color of the sidebar in the admin dashboard */
+body#djHideToolBar div#content .grp-menu {
+    background-color: #fff;
+}
+
+/* Add any other custom styles as needed */
+.circle-icon {
+    display: flex;
+    align-items: center; /* Align items vertically */
+
+}
+
+.circle-icon i {
+    color: #ffffff; /* Replace with your desired text color */
+    border-radius: 50%;
+    padding: 10px; /* Adjust padding as needed */
+    margin-right: 5px; /* Add margin between the icon and the number */
+}
+
