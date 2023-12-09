@@ -101,7 +101,7 @@ class UserLoginViewSet(viewsets.GenericViewSet):
             phone_number = serializer.validated_data['phone_number']
             password = serializer.validated_data['password']
             
-            user = CustomUser.objects.filter(phone_number=phone_number).first()
+            user = CustomUser.objects.filter(phone_number__contains=phone_number).first()
             
             if user is not None and user.check_password(password):
                 user.last_login = timezone.now()
